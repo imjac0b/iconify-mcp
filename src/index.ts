@@ -22,13 +22,32 @@ export class Iconify extends McpAgent {
   });
 
   async init() {
-    this.server.tool("list_of_icon_sets", {}, async () => {
+    this.server.tool("get_all_icon_sets", {}, async () => {
       const data = await iconify("/collections");
 
       return {
         content: [{ type: "text", text: JSON.stringify(data) }],
       };
     });
+
+    this.server.tool(
+      "get_icon_set",
+      {
+        set: z.string(),
+      },
+      async ({ set }) => {
+        const data = await iconify("/collection", {
+          params: {
+            prefix: set,
+            info: true,
+          },
+        });
+
+        return {
+          content: [{ type: "text", text: JSON.stringify(data) }],
+        };
+      }
+    );
 
     this.server.tool(
       "search_icons",
