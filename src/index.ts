@@ -1,6 +1,19 @@
 import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { ofetch } from "ofetch";
+import { capitalizeDash } from "./utils";
+
+const iconify = ofetch.create({
+  baseURL: "https://api.iconify.design",
+  headers: {
+    "User-Agent": "Iconify MCP (https://github.com/imjac0b/iconify-mcp)",
+  },
+  cf: {
+    cacheEverything: true,
+    cacheTtl: 60 * 60 * 24,
+  },
+});
 
 export class Iconify extends McpAgent {
   server = new McpServer({
@@ -9,49 +22,88 @@ export class Iconify extends McpAgent {
   });
 
   async init() {
-    // Simple addition tool
+    this.server.tool("list_of_icon_sets", {}, async () => {
+      const data = await iconify("/collections");
+
+      return {
+        content: [{ type: "text", text: JSON.stringify(data) }],
+      };
+    });
+
     this.server.tool(
-      "add",
-      { a: z.number(), b: z.number() },
-      async ({ a, b }) => ({
-        content: [{ type: "text", text: String(a + b) }],
-      })
+      "search_icons",
+      {
+        query: z.string(),
+        limit: z.number().max(999).optional().default(64),
+        start: z.number().optional().describe("Start index of result"),
+        prefix: z
+          .string()
+          .optional()
+          .describe(
+            "Icon set prefix if you want to get result only for one icon set."
+          ),
+      },
+      async ({ query, limit, start, prefix }) => {
+        if (limit < 32) {
+          limit = 32;
+        }
+
+        if (limit > 999) {
+          limit = 999;
+        }
+
+        const data = await iconify("/search", {
+          params: {
+            query,
+            limit,
+            start,
+            prefix,
+          },
+        });
+
+        return {
+          content: [{ type: "text", text: JSON.stringify(data) }],
+        };
+      }
     );
 
-    // Calculator tool with multiple operations
     this.server.tool(
-      "calculate",
+      "get_icon",
       {
-        operation: z.enum(["add", "subtract", "multiply", "divide"]),
-        a: z.number(),
-        b: z.number(),
+        set: z.string(),
+        icon: z.string(),
       },
-      async ({ operation, a, b }) => {
-        let result: number;
-        switch (operation) {
-          case "add":
-            result = a + b;
-            break;
-          case "subtract":
-            result = a - b;
-            break;
-          case "multiply":
-            result = a * b;
-            break;
-          case "divide":
-            if (b === 0)
-              return {
-                content: [
-                  {
-                    type: "text",
-                    text: "Error: Cannot divide by zero",
-                  },
-                ],
-              };
-            result = a / b;
-            break;
-        }
-        return { content: [{ type: "text", text: String(result) }] };
+      async ({ set, icon }) => {
+        const data = await iconify(`/${set}.json`, {
+          params: {
+            icons: icon,
+          },
+        });
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({
+                IconifyIcon: data,
+                css: {
+                  unocss: `<div class="i-${set}:${icon}" style="color: #fff;"></div>`,
+                  tailwindcss: `<span class="icon-[${set}--${icon}]" style="color: #fff;"></span>`,
+                },
+                web: {
+                  IconifyIconWebComponent: `<iconify-icon icon="${set}:${icon}" width="24" height="24" style="color: #fff"></iconify-icon>`,
+                  IconifyForVue: `<Icon icon="${set}:${icon}" width="24" height="24"  style="color: #fff" />`,
+                  IconifyForReact: `<Icon icon="${set}:${icon}" width="24" height="24"  style={{color: #fff}} />`,
+                  IconifyForSvelte: `<Icon icon="${set}:${icon}" width="24" height="24"  style={{color: #fff}} />`,
+                  AstroIcon: `<Icon name="${set}:${icon}" />`,
+                  UnpluginIcons: `import ${capitalizeDash(set)}${capitalizeDash(
+                    icon
+                  )} from '~icons/${set}/${icon}';`,
+                },
+              }),
+            },
+          ],
+        };
       }
     );
   }

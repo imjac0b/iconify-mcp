@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "iconify": {
+      "url": "http://localhost:8787/sse"
+    }
+  }
+}
