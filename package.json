@@ -1,24 +1,20 @@
 {
-  "name": "remote-mcp-server-authless",
-  "version": "0.0.0",
+  "name": "iconify-mcp",
+  "module": "src/index.ts",
+  "type": "module",
   "private": true,
   "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "format": "biome format --write",
-    "lint:fix": "biome lint --fix",
-    "start": "wrangler dev",
-    "cf-typegen": "wrangler types"
+    "build": "mkdir -p bin && bun build src/index.ts --compile --minify --sourcemap --outfile bin/iconify-mcp"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250426.0",
-    "typescript": "^5.5.2",
-    "wrangler": "^4.13.2"
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.7.0",
-    "agents": "^0.0.65",
+    "@modelcontextprotocol/sdk": "^1.11.2",
     "ofetch": "^1.4.1",
-    "zod": "^3.24.2"
+    "zod": "^3.24.4"
   }
 }
