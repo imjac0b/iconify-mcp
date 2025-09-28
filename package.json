@@ -1,15 +1,15 @@
 {
   "name": "iconify-mcp-server",
   "type": "module",
-  "version": "1.0.1",
-  "module": "src/index.ts",
+  "version": "1.0.2",
+  "main": "./dist/index.js",
   "description": "MCP server for Iconify",
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
     "prepublishOnly": "bun run build"
   },
   "bin": {
-    "iconify-mcp-server": "dist/index.js"
+    "iconify-mcp-server": "./dist/index.js"
   },
   "files": [
     "dist"
