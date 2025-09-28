@@ -25,6 +25,7 @@
   },
   "bugs": "https://github.com/imjac0b/iconify-mcp-server/issues",
   "author": "Jacob <me@jacob.com.hk>",
+  "license": "GPL-3.0",
   "devDependencies": {
     "@types/bun": "latest",
     "bun-plugin-dts": "^0.3.0"
