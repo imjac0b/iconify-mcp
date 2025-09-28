@@ -18,6 +18,13 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "mcp",
+    "iconify",
+    "icon",
+    "icon-set",
+    "icon-collection"
+  ],
   "homepage": "https://github.com/imjac0b/iconify-mcp-server#readme",
   "repository": {
     "type": "git",
