@@ -1,13 +1,33 @@
 {
-  "name": "iconify-mcp",
-  "module": "src/index.ts",
+  "name": "iconify-mcp-server",
   "type": "module",
-  "private": true,
-  "scripts": {
-    "build": "mkdir -p bin && bun build src/index.ts --compile --minify --sourcemap --outfile bin/iconify-mcp"
+  "version": "1.0.0",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "description": "MCP server for Iconify",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
   },
+  "scripts": {
+    "build": "bun run build.ts",
+    "prepublishOnly": "bun run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/imjac0b/iconify-mcp-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imjac0b/iconify-mcp-server.git"
+  },
+  "bugs": "https://github.com/imjac0b/iconify-mcp-server/issues",
+  "author": "Jacob <me@jacob.com.hk>",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "bun-plugin-dts": "^0.3.0"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"

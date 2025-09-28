@@ -7,7 +7,8 @@ import { capitalizeDash } from "./utils";
 const iconify = ofetch.create({
   baseURL: "https://api.iconify.design",
   headers: {
-    "User-Agent": "Iconify MCP (https://github.com/imjac0b/iconify-mcp)",
+    "User-Agent":
+      "Iconify MCP Server (https://github.com/imjac0b/iconify-mcp-server)",
   },
 });
 
@@ -123,6 +124,10 @@ server.tool(
   }
 );
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
-console.error("Iconify MCP Server running on stdio");
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error("Iconify MCP Server running on stdio");
+}
+
+main();
